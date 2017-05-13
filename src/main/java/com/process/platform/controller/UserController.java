@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by Кирилл on 03.04.2017.
  */
 @RestController
-
+@RequestMapping(value = "/user")
 public class UserController {
 
     private static final Logger logger = Logger.getLogger(UserController.class);
@@ -24,4 +24,5 @@ public class UserController {
         logger.info(authentication);
         return ResponseEntity.ok("Hello bitch" + name);
     }
+
 }

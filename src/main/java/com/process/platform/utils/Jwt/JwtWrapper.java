@@ -9,9 +9,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Created by Кирилл on 02.04.2017.
- */
 public class JwtWrapper {
     public static JwtUser wrapUser(User user) {
         JwtUser jwtUser = new JwtUser();

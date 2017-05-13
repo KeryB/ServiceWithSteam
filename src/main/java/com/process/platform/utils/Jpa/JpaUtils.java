@@ -11,4 +11,6 @@ public class JpaUtils {
 
     public static final String USER_PRIMARY_KEY = "id_user";
     public static final String TEAM_PRIMARY_KEY = "id_team";
+
+    public static final String CHARACTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 }

@@ -2,9 +2,9 @@ package com.process.platform.service.google;
 
 import com.process.platform.entity.user.User;
 
-/**
- * Created by Кирилл on 10.04.2017.
- */
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
 public interface GoogleAuthService {
-    User authenticateUserFromGoogle(String token);
+    User authenticateUserFromGoogle(String token) throws GeneralSecurityException, IOException;
 }

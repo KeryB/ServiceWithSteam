@@ -33,8 +33,8 @@ public class Team {
 
     private Date creation_date;
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "primaryTeam")
+/*    @OneToMany(cascade = CascadeType.ALL,mappedBy = "primaryTeam")
     private List<User> userList;
-
+*/
 
 }

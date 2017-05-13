@@ -9,7 +9,22 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5Dialect
     hibernate:
       ddl-auto: update
+
+#Mail properties
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+    username: bulychevkery@gmail.com
+    password: voka803519
 jwt:
   header: x-auth-token
   secret: da7ca69f41dce5179752a7546dfa0959
   expiration: 259200
+
+Google:
+  clientId: 144148076914-ggd8h7aikicheumbfmsqtbv3klpni6cn.apps.googleusercontent.com

@@ -1,12 +1,11 @@
 package com.process.platform.utils.Jwt;
 
+import com.process.platform.entity.jwt.EmailToken;
 import com.process.platform.entity.jwt.Token;
-import com.process.platform.entity.user.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.aspectj.apache.bcel.util.ClassLoaderRepository;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +33,16 @@ public class JwtTokenUtils {
                 .signWith(SignatureAlgorithm.HS512,secret)
                 .compact();
     }
+    public static String convertClaims(String email, Date expirationDate,Date creationDate,String secret) {
+        Map<String,Object> claims = new HashMap<>();
+        claims.put(CLAIM_KEY_USERNAME,email);
+        claims.put(CLAIM_KEY_CREATION_DATE,creationDate);
+        return Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(expirationDate)
+                .signWith(SignatureAlgorithm.HS512,secret)
+                .compact();
+    }
 
     public static Token unPackingData(String token,String secret) {
         Claims claims = null;
@@ -48,6 +57,8 @@ public class JwtTokenUtils {
             String role = (String) claims.get(CLAIM_KEY_ROLE);
             Date creationDate = new Date((Long) claims.get(CLAIM_KEY_CREATION_DATE));
             return new Token(email,role,claims.getExpiration(),creationDate);
+        }catch (Exception e){
+            return null;
         }
         String email = (String) (claims != null ? claims.get(CLAIM_KEY_USERNAME) : null);
         String role = (String) (claims != null ? claims.get(CLAIM_KEY_ROLE) : null);
@@ -55,7 +66,18 @@ public class JwtTokenUtils {
         return new Token(email,role,claims.getExpiration(),creationDate);
     }
 
-    public static String getEmailFromToken(String tokenHeader) {
-        return null;
+    public static EmailToken unPackingEmailData(String token, String secret) {
+        Claims claims;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(secret)
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return null;
+        }
+        String email = (String) (claims != null ? claims.get(CLAIM_KEY_USERNAME) : null);
+        Date creationDate = new Date((Long) claims.get(CLAIM_KEY_CREATION_DATE));
+        return new EmailToken(email, creationDate, claims.getExpiration());
     }
 }

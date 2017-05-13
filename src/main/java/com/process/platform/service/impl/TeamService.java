@@ -21,8 +21,8 @@ public class TeamService {
         this.teamRepository = teamRepository;
     }
 
-    public void save(Team team){
-        teamRepository.save(team);
+    public Team save(Team team){
+        return teamRepository.save(team);
     }
     public void delete(Team team){
         teamRepository.delete(team);

@@ -14,7 +14,8 @@ target/
 *.iws
 *.iml
 *.ipr
-
+webpackconfig/node_modules
+webpackconfig/.gitignore
 ### NetBeans ###
 nbproject/private/
 build/
