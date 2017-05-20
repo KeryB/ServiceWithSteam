@@ -10,13 +10,14 @@ export function userSignUpRequest(userData) {
     });
     console.log(config);
     const { errors, isValid } = validateUserSignUpPage(userData);
-    if(errors||isValid){
-        console.log(errors);
-        console.log(isValid);
+    if(!isValid){
+        console.log('asd',errors);
         return {errors,isValid};
     }
+    console.log("asdasd");
     return fetch('/api/auth/registration',config).then(response=>{
             console.log(response.status);
+           console.log(response.json());
             return response.json();
         }).catch(error=>{
             console.log(error);

@@ -46,7 +46,7 @@ public class User{
 
     @Size(min = 3,max = 64)
     @Pattern(regexp = "([А-аЯ-я]|[A-aZ-z]|\\d)+")
-    private String nick_name;
+    private String nickname;
 
     private UserRole role;
 

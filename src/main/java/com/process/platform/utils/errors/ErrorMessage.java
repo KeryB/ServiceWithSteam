@@ -10,4 +10,5 @@ public class ErrorMessage {
     public static final String TOKEN_CANNOT_BE_REFRESHED_NOW="Токен не может быть сейчас обновлен";
     public static final String INVALID_TOKEN_HEADER = "Неправильный заголовок с токеном";
     public static final String TOKEN_EXPIRED = "Время токена вышло";
+    public static final String BAD_REQUEST = "Bad Request";
 }

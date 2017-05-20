@@ -1,6 +1,6 @@
 package com.process.platform.controller.restController;
 
-import com.google.api.client.googleapis.auth.clientlogin.ClientLogin;
+import com.process.platform.entity.RestResponse;
 import com.process.platform.entity.jwt.EmailToken;
 import com.process.platform.entity.jwt.JwtAuthenticationRequest;
 import com.process.platform.entity.jwt.Token;
@@ -13,7 +13,6 @@ import com.process.platform.service.security.JwtTokenService;
 import com.process.platform.utils.Jwt.EmailUtils;
 import com.process.platform.utils.errors.ErrorMessage;
 import com.process.platform.utils.errors.ErrorStatus;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +23,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,7 +62,7 @@ public class AuthenticationRestController {
     }
 
     @RequestMapping(value = "/createAuthToken", method = RequestMethod.POST)
-    public ResponseEntity createAuthToken(@Valid @RequestBody JwtAuthenticationRequest jwtAuthenticationRequest) {
+    public RestResponse createAuthToken(@Valid @RequestBody JwtAuthenticationRequest jwtAuthenticationRequest) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                 = new UsernamePasswordAuthenticationToken(
                 jwtAuthenticationRequest.getEmail(),
@@ -76,34 +74,35 @@ public class AuthenticationRestController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             logger.info(authentication);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.OK).body("Такого юзера нет");
+            return RestResponse.error(ErrorStatus.EMAIL_NOT_UNIQUE,ErrorMessage.EMAIL_NOT_UNIQUE);
         }
         User user = userService.findByEmail(jwtAuthenticationRequest.getEmail());
         String token = jwtTokenService.generateToken(user);
         logger.info(token);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+        return RestResponse.ok(new JwtAuthenticationResponse(token));
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public ResponseEntity registerUser(@Valid @RequestBody User user) {
+    public RestResponse registerUser(@Valid @RequestBody User user) {
         if (userService.findByEmail(user.getEmail()) != null) {
-            return ResponseEntity.status(200).body(ErrorMessage.EMAIL_NOT_UNIQUE);
+            return RestResponse.error(ErrorStatus.EMAIL_NOT_UNIQUE,ErrorMessage.EMAIL_NOT_UNIQUE);
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreation_date(new Date());
         user.setRole(UserRole.NO_TEAM);
         user.setCaptain(false);
-        String token = jwtTokenService.generateEmailConfirmationToken(user);
+/*        String token = jwtTokenService.generateEmailConfirmationToken(user);
         try {
             emailUtils.confirmRegistration(token, user);
         } catch (MessagingException e) {
             return null;
-        }
+        }*/
+        String token = jwtTokenService.generateToken(user);
         logger.info(user);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+        return RestResponse.ok(new JwtAuthenticationResponse(token));
     }
 
-    @RequestMapping(value = "/confirm_registration", method = RequestMethod.GET)
+/*    @RequestMapping(value = "/confirm_registration", method = RequestMethod.GET)
     public ResponseEntity confirmRegistration(@RequestHeader("token") String tokenHeader, HttpServletRequest request) {
         EmailToken emailToken = jwtTokenService.getClaimsFromEmailToken(tokenHeader);
         if (emailToken == null)
@@ -114,34 +113,34 @@ public class AuthenticationRestController {
         userService.saveUser(user);
         return ResponseEntity.ok(true);
     }
-
+*/
     @RequestMapping(value = "/google_auth", method = RequestMethod.POST)
-    public ResponseEntity googleAuth(@RequestBody JwtAuthenticationResponse jwtAuthenticationResponse) {
+    public RestResponse googleAuth(@RequestBody JwtAuthenticationResponse jwtAuthenticationResponse) {
         User user;
         try {
             user = googleAuthService.authenticateUserFromGoogle(jwtAuthenticationResponse.getToken());
         } catch (GeneralSecurityException | IOException e) {
-            return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Bad Request");
+            return RestResponse.error(HttpStatus.BAD_REQUEST.value(),HttpStatus.BAD_REQUEST.toString());
         }
         final String token = jwtTokenService.generateToken(user);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+        return RestResponse.ok(new JwtAuthenticationResponse(token));
     }
 
     @RequestMapping(value = "/refresh_token", method = RequestMethod.GET)
-    public ResponseEntity refreshToken(HttpServletRequest request) {
+    public RestResponse refreshToken(HttpServletRequest request) {
         String header = request.getHeader(tokenHeader);
         Token token = jwtTokenService.getClaimsFromToken(header);
         if (token == null)
-            return ResponseEntity.status(200).body(ErrorMessage.INVALID_TOKEN_HEADER);
+            return RestResponse.error(ErrorStatus.INVALID_TOKEN_HEADER,ErrorMessage.INVALID_TOKEN_HEADER);
         User user = userService.findByEmail(token.getEmail());
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("UNAUTHORIZED");
+            return RestResponse.error(HttpStatus.UNAUTHORIZED.value(),HttpStatus.UNAUTHORIZED.toString());
         }
         if (jwtTokenService.canTokenBeRefreshed(token)) {
             String refreshedToken = jwtTokenService.generateToken(user);
-            return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
+            return RestResponse.ok(new JwtAuthenticationResponse(refreshedToken));
         } else {
-            return ResponseEntity.status(200).body(ErrorMessage.TOKEN_CANNOT_BE_REFRESHED_NOW);
+            return RestResponse.error(ErrorStatus.TOKEN_CANNOT_BE_REFRESHED_NOW,ErrorMessage.TOKEN_CANNOT_BE_REFRESHED_NOW);
         }
     }
 

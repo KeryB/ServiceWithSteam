@@ -23,7 +23,6 @@ class RegisterForm extends Component {
     onSubmit(e) {
         this.setState({errors: {}});
         e.preventDefault();
-        console.log(this.state);
         /*        this.props.userRegistrationRequest(this.state).then(
          ()=>{},
          ({data})=> this.setState({errors:data})
