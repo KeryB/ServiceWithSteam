@@ -1,61 +1,186 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
+import TextFieldGroup from './groups/TextFieldGroup';
+import {browserHistory} from 'react-router';
+import {api} from '../../actions/api/Api';
+import {validateUserSignInPage} from '../../actions/validate';
+import {putToken} from '../../utils/tokenManager';
+import {setSettings} from '../../utils/Utils';
+import {connect} from "react-redux";
 
-export default class LoginForm extends Component {
+class LoginForm extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: '',
+            password: '',
+            checkBox: false,
+            errors: {}
+        };
+        this.onChange = this.onChange.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+        this.onchangeCheckBox = this.onchangeCheckBox.bind(this);
+    }
+
+    onChange(e) {
+        this.setState({[e.target.name]: e.target.value});
+    }
+
+    isValid(){
+        const{errors,isValid} = validateUserSignInPage(this.state);
+        if(!isValid){
+            this.setState({errors:errors});
+        }
+        return isValid;
+    }
+
+    onSubmit(e) {
+        e.preventDefault();
+        if(this.isValid()){
+            this.setState({errors:{}});
+            api('/api/auth/createAuthToken', 'POST', this.state).then(response => {
+                console.log(response);
+                if (response.result[0].token) {
+                    putToken(response.result[0].token);
+                    browserHistory.push('/homePage');
+                }
+            }, error => {
+                if (error.status >= 400 && error.status < 500) {
+                    this.setState({errors: error.data[0]});
+                    console.log(this.state);
+                    return;
+                }
+                if (error.status == 15) {
+                    this.setState({
+                        errors: {
+                            email: error.message
+                        }
+                    });
+
+                    return;
+                }
+                setSettings(error.message,error.status);
+            })
+        }
+    }
+
+    onchangeCheckBox(e) {
+        if (this.state.checkBox) {
+            this.setState({checkBox: false});
+        } else {
+            this.setState({checkBox: true});
+        }
+    }
+
     render() {
+        const {errors} = this.state;
         return (
-            <div className="login_page">
-                <div className="login_page_wrapper">
-                    <div className="md-card" id="login_card">
-                        <div className="md-card-content large-padding" id="login_form">
-                            <div className="login_heading">
-                                <div className="user_avatar"></div>
+            <div>
+                <section className="section-account">
+                    <div className="container-alt">
+                        <div className="card-body">
+                            <div className="row">
+                                <div className="col-sm-12">
+                                    <div className="wrapper-page">
+                                        <div className="m-t-40 account-pages">
+
+                                            <div className="text-center">
+                                                <div className="user_avatar">
+                                                </div>
+                                            </div>
+
+                                            <div className="account-content">
+                                                <form className="form" onSubmit={this.onSubmit}>
+
+                                                    <TextFieldGroup
+                                                        name="email"
+                                                        value={this.state.email}
+                                                        label="email"
+                                                        error={errors.email}
+                                                        type="text"
+                                                        onChange={this.onChange}
+                                                        id="inputEmail"
+                                                        spanName="md md-email"
+                                                    />
+
+                                                    <TextFieldGroup
+                                                        name="password"
+                                                        value={this.state.password}
+                                                        label="password"
+                                                        error={errors.password}
+                                                        type="password"
+                                                        onChange={this.onChange}
+                                                        id="inputPassword"
+                                                        spanName="glyphicon glyphicon-lock"
+                                                    />
+
+                                                    <div className="row">
+                                                        <div className="checkbox checkbox-styled">
+                                                            <label>
+                                                                <input type="checkbox"
+                                                                       value={this.state.checkBox}
+                                                                       onChange={this.onchangeCheckBox}
+                                                                />
+                                                                <span>Запомнить меня</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div className="account-btn">
+                                                        <div className="col-lg-5">
+                                                            <button className="btn btn-primary btn-raised"
+                                                                    type="submit">
+                                                                Войти
+                                                            </button>
+                                                        </div>
+
+                                                    </div>
+                                                </form>
+                                                <div className="form-group m-t-50"></div>
+                                                <br></br>
+                                                <div className="m-t-50">
+                                                    <div className=" m-t-50">
+                                                        <p>
+                                                            <a href="#" className="btn btn-block btn-raised btn-info"><i
+                                                                className="fa fa-facebook pull-left"/>Авторизоваться
+                                                                через фейсбук</a>
+                                                        </p>
+                                                    </div>
+
+                                                    <p>
+                                                        <a href="#" className="btn btn-block btn-raised btn-info"><i
+                                                            className="fa fa-google pull-left"/>Авторизоваться через
+                                                            Google</a>
+                                                    </p>
+                                                </div>
+                                                <div className="form-group m-t-50">
+                                                    <div className="col-md-7 col-md-offset-7 ">
+                                                        <a href="page-recoverpw.html" className="text-muted"><i
+                                                            className="fa fa-lock m-r-5"/> Забыли пароль?</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div className="row m-t-10">
+                                        <div className="col-sm-12 text-center">
+                                            <p className="text-muted">Еще нет аккаунта? <Link
+                                                to='/register'><b className="text-custom">Регистрация</b></Link>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
-                            <form>
-                                <div className="uk-form-row">
-                                    <label htmlFor="login_username">Username</label>
-                                    <input className="md-input" type="text" id="login_username"
-                                           name="login_username"/>
-                                </div>
-
-                                <div className="uk-form-row">
-                                    <label htmlFor="login_password">Password</label>
-                                    <input className="md-input" type="password" id="login_password"
-                                           name="login_username"/>
-                                </div>
-
-                                <div className="uk-margin-medium-top">
-                                    <a href="#" className="md-btn md-btn-primary md-btn-block md-btn-large">Sign
-                                        In</a>
-                                </div>
-                                <div className="uk-grid uk-grid-width-1-3 uk-grid-small uk-margin-top">
-                                    <div><a href="#" className="md-btn md-btn-block md-btn-facebook"
-                                            data-uk-tooltip="{pos:'bottom'}" title="Sign in with Facebook"><i
-                                        className="uk-icon-facebook uk-margin-remove"/></a></div>
-                                    <div><a href="#" className="md-btn md-btn-block md-btn-twitter"
-                                            data-uk-tooltip="{pos:'bottom'}" title="Sign in with Twitter"><i
-                                        className="uk-icon-twitter uk-margin-remove"/></a></div>
-                                    <div><a href="#" className="md-btn md-btn-block md-btn-gplus"
-                                            data-uk-tooltip="{pos:'bottom'}" title="Sign in with Google+"><i
-                                        className="uk-icon-google-plus uk-margin-remove"/></a></div>
-                                </div>
-                                <div className="uk-margin-top">
-                                    <a href="#" id="login_help_show" className="uk-float-right">Need help?</a>
-                                    <span className="icheck-inline">
-                                            <input type="checkbox" name="login_page_stay_signed"
-                                                   id="login_page_stay_signed"
-                                                   data-md-icheck/>
-                                            <label htmlFor="login_page_stay_signed" className="inline-label">Stay signed in</label>
-                                    </span>
-                                </div>
-                            </form>
                         </div>
                     </div>
-                    <div className="uk-text-center">
-                        <Link to='/register'>Создать аккаунт</Link>
-                    </div>
-                </div>
+                </section>
             </div>
         )
     }
 }
+
+
+export default connect()(LoginForm);

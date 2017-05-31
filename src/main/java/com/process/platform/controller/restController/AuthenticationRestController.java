@@ -74,7 +74,7 @@ public class AuthenticationRestController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             logger.info(authentication);
         } catch (Exception e) {
-            return RestResponse.error(ErrorStatus.EMAIL_NOT_UNIQUE,ErrorMessage.EMAIL_NOT_UNIQUE);
+            return RestResponse.error(ErrorStatus.EMAIL_OR_PASSWORD_NOT_CORRECT,ErrorMessage.EMAIL_OR_PASSWORD_NOT_CORRECT);
         }
         User user = userService.findByEmail(jwtAuthenticationRequest.getEmail());
         String token = jwtTokenService.generateToken(user);
@@ -97,6 +97,7 @@ public class AuthenticationRestController {
         } catch (MessagingException e) {
             return null;
         }*/
+        userService.saveUser(user);
         String token = jwtTokenService.generateToken(user);
         logger.info(user);
         return RestResponse.ok(new JwtAuthenticationResponse(token));

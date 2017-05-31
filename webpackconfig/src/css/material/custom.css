@@ -1,0 +1,177 @@
+/*Account Pages*/
+.container-alt {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.wrapper-page {
+    margin: auto;
+    position: relative;
+    max-width: 350px;
+}
+.account-pages {
+    box-shadow: 0 0px 24px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);
+    border-radius: 5px;
+}
+.account-pages .account-content {
+    padding: 20px;
+    background-color: #ffffff;
+}
+.account-pages .account-btn {
+    position: absolute;
+    margin-left: 100px;
+}
+.account-logo-box {
+    background-color: #505458;
+    padding: 10px;
+    border-radius: 5px 5px 0 0;
+}
+.user_avatar {
+    width: 64px;
+    height: 64px;
+    display: inline-block;
+    text-align: center;
+    border-radius: 50%;
+    background-image: url("../zircos/img/user.png");
+    background-repeat: no-repeat;
+    background-color: rgba(0, 0, 0, 0.085);
+    background-position: 50% 1px;
+}
+.checkmark {
+    width: 120px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+.path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 0;
+    animation: dash 2s ease-in-out;
+    -webkit-animation: dash 2s ease-in-out;
+}
+.spin {
+    animation: spin 2s;
+    -webkit-animation: spin 2s;
+    transform-origin: 50% 50%;
+    -webkit-transform-origin: 50% 50%;
+}
+@-webkit-keyframes dash {
+    0% {
+        stroke-dashoffset: 1000;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+@keyframes dash {
+    0% {
+        stroke-dashoffset: 1000;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+@keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes text {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+@keyframes text {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+/* SOCIAL BUTTONS*/
+.btn-facebook {
+    color: #ffffff !important;
+    background-color: #3b5998 !important;
+}
+.btn-twitter {
+    color: #ffffff !important;
+    background-color: #00aced !important;
+}
+.btn-linkedin {
+    color: #ffffff !important;
+    background-color: #007bb6 !important;
+}
+.btn-dribbble {
+    color: #ffffff !important;
+    background-color: #ea4c89 !important;
+}
+.btn-googleplus {
+    color: #ffffff !important;
+    background-color: #dd4b39 !important;
+}
+.btn-instagram {
+    color: #ffffff !important;
+    background-color: #517fa4 !important;
+}
+.btn-pinterest {
+    color: #ffffff !important;
+    background-color: #cb2027 !important;
+}
+.btn-dropbox {
+    color: #ffffff !important;
+    background-color: #007ee5 !important;
+}
+.btn-flickr {
+    color: #ffffff !important;
+    background-color: #ff0084 !important;
+}
+.btn-tumblr {
+    color: #ffffff !important;
+    background-color: #32506d !important;
+}
+.btn-skype {
+    color: #ffffff !important;
+    background-color: #00aff0 !important;
+}
+.btn-youtube {
+    color: #ffffff !important;
+    background-color: #bb0000 !important;
+}
+.btn-github {
+    color: #ffffff !important;
+    background-color: #171515 !important;
+}
+
+/*BUTTTUON LIST*/
+.button-list {
+    margin-left: -8px;
+    margin-bottom: -12px;
+}
+.button-list .btn {
+    margin-bottom: 12px;
+    margin-left: 8px;
+}
+
+/*CUSTOM_TEXT*/
+
+.text-custom {
+    color: #00acc1 !important;
+}
+.text-danger {
+    color: #f5707a !important;
+}

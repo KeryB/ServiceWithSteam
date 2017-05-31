@@ -1,5 +1,11 @@
 import React, {Component} from 'react'
-import classnames from 'classnames';
+import {Link} from 'react-router';
+import {validateUserSignUpPage} from '../../actions/validate';
+import TextFieldGroup from './groups/TextFieldGroup'
+import {api} from '../../actions/api/Api';
+import {putToken} from '../../utils/tokenManager'
+import {browserHistory} from 'react-router';
+import {setSettings} from '../../utils/Utils';
 
 class RegisterForm extends Component {
 
@@ -10,10 +16,21 @@ class RegisterForm extends Component {
             password: '',
             confirmPassword: '',
             nickname: '',
-            errors: ''
+            checkBox: false,
+            errors: {}
         };
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.onchangeCheckBox = this.onchangeCheckBox.bind(this);
+    }
+
+    isValid() {
+        const {errors, isValid} = validateUserSignUpPage(this.state);
+        if (!isValid) {
+            console.log('ВАЛИДАЦИЯ В REGISTERFORM');
+            this.setState({errors: errors});
+        }
+        return isValid;
     }
 
     onChange(e) {
@@ -21,79 +38,166 @@ class RegisterForm extends Component {
     }
 
     onSubmit(e) {
-        this.setState({errors: {}});
         e.preventDefault();
-        /*        this.props.userRegistrationRequest(this.state).then(
-         ()=>{},
-         ({data})=> this.setState({errors:data})
-         );*/
-        this.setState(this.props.userRegistrationRequest(this.state));
+        if (this.isValid()) {
+            this.setState({errors: {}});
+            api('/api/auth/registration', 'POST', this.state).then(response => {
+                console.log(response);
+                if (response.result[0].token) {
+                    putToken(response.result[0].token);
+
+                    /*Сделать fleshMessage
+                     * Сделать redirect
+                     * Поставить статус token =valid
+                     */
+                    this.props.addFlashMessage({
+                        type: 'success',
+                        text: 'Вы успешно зарегистрировались в системе'
+                    });
+                    browserHistory.push('/homePage');
+                }
+            }, error => {
+                if (error.status >= 400 && error.status < 500) {
+                    this.setState({errors: error.data[0]});
+                    console.log(this.state);
+                    return;
+                }
+                if (error.status == 38) {
+                    this.setState({
+                        errors: {
+                            email: error.message
+                        }
+                    });
+                    return;
+                }
+                setSettings(error.message,error.status)
+            })
+        }
+    }
+
+    onchangeCheckBox(e) {
+        if (this.state.checkBox) {
+            this.setState({checkBox: false});
+        } else {
+            this.setState({checkBox: true});
+        }
     }
 
     render() {
         const {errors} = this.state;
         return (
             <div>
-                <form onSubmit={this.onSubmit}>
-                    <h1>Регистрация</h1>
-                    <div className={classnames("form-group",{'has-error':errors.email})}>
-                        <label htmlFor="inputEmail" className="control-label">Email</label>
-                        <div>
-                            <input type="email" className="form-control" id="inputEmail"
-                                   value={this.state.email}
-                                   onChange={this.onChange}
-                                   name="email"
-                                   placeholder="Email"/>
+                <section className="section-account">
+                    <div className="container-alt">
+                        <div className="card-body">
+                            <div className="row">
+                                <div className="col-sm-12">
+
+                                    <div className="wrapper-page">
+
+                                        <div className="m-t-40 account-pages">
+
+                                            <div className="text-center">
+                                                <div className="user_avatar">
+                                                </div>
+                                            </div>
+
+                                            <div className="account-content">
+
+                                                <form className="form" onSubmit={this.onSubmit}>
+                                                    <TextFieldGroup
+                                                        name='email'
+                                                        value={this.state.email}
+                                                        label='email'
+                                                        error={errors.email}
+                                                        onChange={this.onChange}
+                                                        id='inputEmail'
+                                                        spanName='md md-email fa-lg'
+                                                    />
+
+
+                                                    <TextFieldGroup
+                                                        name="password"
+                                                        value={this.state.password}
+                                                        label="Пароль"
+                                                        error={errors.password}
+                                                        type="password"
+                                                        onChange={this.onChange}
+                                                        id="inputPassword"
+                                                        spanName="glyphicon glyphicon-lock"/>
+
+                                                    <TextFieldGroup
+                                                        name="confirmPassword"
+                                                        value={this.state.confirmPassword}
+                                                        label="Подтверждение пароля"
+                                                        error={errors.confirmPassword}
+                                                        type="password"
+                                                        onChange={this.onChange}
+                                                        id="confirmPassword"
+                                                        spanName="fa fa-unlock fa-lg"/>
+
+                                                    <TextFieldGroup
+                                                        name="nickname"
+                                                        value={this.state.nickname}
+                                                        label="NickName"
+                                                        error={errors.nickname}
+                                                        type="text"
+                                                        onChange={this.onChange}
+                                                        id="nick"
+                                                        spanName="mdi md-account-box md-lg"/>
+
+                                                    <div className="row col-md-offset-1">
+                                                        <div className="checkbox checkbox-styled">
+                                                            <label >
+                                                                <input type="checkbox"
+                                                                       name="checkBox"
+                                                                       value={this.state.checkBox}
+                                                                       onChange={this.onchangeCheckBox}
+                                                                />
+                                                                <span>Согласен с <a href="#" className="text-primary"> правилами сайта</a></span>
+                                                            </label>
+                                                        </div>
+                                                        {errors.checkBox &&
+                                                        <span
+                                                            className="text-danger col-md-offset-1">{errors.checkBox}</span>}
+                                                    </div>
+                                                    <div className="">
+                                                        <div className="row ">
+                                                            <div className="account-btn col-md-12">
+                                                                <button
+                                                                    className="btn btn-raised btn-primary ink-reaction"
+                                                                    type="submit">
+                                                                    Регистрация
+                                                                </button>
+                                                            </div>
+                                                            <div className="m-t-20"></div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                                <br/>
+                                            </div>
+                                        </div>
+                                        <div className="row m-t-20">
+                                            <div className="col-sm-12 text-center">
+                                                <p className="text-muted">Уже есть аккаунт?<Link to='/login'
+                                                   className="text-primary m-l-5"><b>Авторизоваться</b></Link>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        {errors.email && <span className="help-block">{errors.email}</span>}
                     </div>
-                    <div className={classnames("form-group",{'has-error':errors.password})}>
-                        <label htmlFor="inputPassword" className="control-label">Пароль</label>
-                        <div >
-                            <input type="password" className="form-control" id="inputPassword"
-                                   name="password"
-                                   value={this.state.password}
-                                   onChange={this.onChange}
-                                   placeholder="Password"/>
-                        </div>
-                        {errors.password && <span className="help-block">{errors.password}</span>}
-                    </div>
-                    <div className={classnames("form-group",{'has-error':errors.confirmPassword})}>
-                        <label htmlFor="confirmPassword" className="control-label">Подтверждение пароля</label>
-                        <div>
-                            <input type="password" className="form-control" id="confirmPassword"
-                                   name="confirmPassword"
-                                   value={this.state.confirmPassword}
-                                   onChange={this.onChange}
-                                   placeholder="Password Confirm"
-                            />
-                        </div>
-                        {errors.confirmPassword && <span className="help-block">{errors.confirmPassword}</span>}
-                    </div>
-                    <div className={classnames("form-group",{'has-error':errors.nickname})}>
-                        <label htmlFor="nick" className="control-label">Nickname</label>
-                        <div>
-                            <input type="text" className="form-control" id="nick"
-                                   name="nickname"
-                                   value={this.state.nickname}
-                                   onChange={this.onChange}
-                                   placeholder="Nickname"/>
-                        </div>
-                        {errors.nickname && <span className="help-block">{errors.nickname}</span>}
-                    </div>
-                    <div className="form-group row">
-                        <div>
-                            <button type="submit" className="btn btn-primary">Регистрация</button>
-                        </div>
-                    </div>
-                </form>
+                </section>
             </div>
         )
     }
 }
 
 RegisterForm.propTypes = {
-    userRegistrationRequest: React.PropTypes.func.isRequired
+    userRegistrationRequest: React.PropTypes.func.isRequired,
+    addFlashMessage: React.PropTypes.func.isRequired
 };
 
 export default RegisterForm;
