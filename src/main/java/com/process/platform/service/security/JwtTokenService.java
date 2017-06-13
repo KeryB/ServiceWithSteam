@@ -34,7 +34,7 @@ public class JwtTokenService {
     public String generateToken(User user) {
         if (user == null)
             return null;
-        Token token = new Token(user.getEmail(), user.getRole().name(), generateExpirationDate(), new Date());
+        Token token = new Token(user.getId(), user.getRole().name(), generateExpirationDate(), new Date());
         return JwtTokenUtils.convertClaims(token, secret);
     }
 

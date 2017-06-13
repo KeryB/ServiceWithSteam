@@ -1,8 +1,5 @@
 package com.process.platform.service.security;
 
-/**
- * Created by Кирилл on 02.04.2017.
- */
 public class JwtAuthenticationResponse {
     private String token;
 

@@ -11,12 +11,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Кирилл on 02.04.2017.
- */
 public class JwtTokenUtils {
 
-    private static final String CLAIM_KEY_USERNAME = "sub";
+    private static final String CLAIM_KEY_ID = "sub";
     private static final String CLAIM_KEY_ROLE = "role";
     private static final String CLAIM_KEY_CREATION_DATE = "cr";
 
@@ -24,7 +21,7 @@ public class JwtTokenUtils {
 
     public static String convertClaims(Token token, String secret) {
         Map<String,Object> claims = new HashMap<>();
-        claims.put(CLAIM_KEY_USERNAME,token.getEmail());
+        claims.put(CLAIM_KEY_ID,token.getId());
         claims.put(CLAIM_KEY_ROLE,token.getRole());
         claims.put(CLAIM_KEY_CREATION_DATE,token.getCreationDate());
         return Jwts.builder()
@@ -35,7 +32,7 @@ public class JwtTokenUtils {
     }
     public static String convertClaims(String email, Date expirationDate,Date creationDate,String secret) {
         Map<String,Object> claims = new HashMap<>();
-        claims.put(CLAIM_KEY_USERNAME,email);
+        claims.put(CLAIM_KEY_ID,email);
         claims.put(CLAIM_KEY_CREATION_DATE,creationDate);
         return Jwts.builder()
                 .setClaims(claims)
@@ -53,17 +50,17 @@ public class JwtTokenUtils {
                     .getBody();
         }catch (ExpiredJwtException e){
             claims=e.getClaims();
-            String email = (String) claims.get(CLAIM_KEY_USERNAME);
+            Long id = (Long) claims.get(CLAIM_KEY_ID);
             String role = (String) claims.get(CLAIM_KEY_ROLE);
             Date creationDate = new Date((Long) claims.get(CLAIM_KEY_CREATION_DATE));
-            return new Token(email,role,claims.getExpiration(),creationDate);
+            return new Token(id,role,claims.getExpiration(),creationDate);
         }catch (Exception e){
             return null;
         }
-        String email = (String) (claims != null ? claims.get(CLAIM_KEY_USERNAME) : null);
-        String role = (String) (claims != null ? claims.get(CLAIM_KEY_ROLE) : null);
+        Long id =  ((Integer)claims.get(CLAIM_KEY_ID)).longValue();
+        String role = (String) claims.get(CLAIM_KEY_ROLE);
         Date creationDate = new Date((Long) claims.get(CLAIM_KEY_CREATION_DATE));
-        return new Token(email,role,claims.getExpiration(),creationDate);
+        return new Token(id ,role,claims.getExpiration(),creationDate);
     }
 
     public static EmailToken unPackingEmailData(String token, String secret) {
@@ -76,8 +73,8 @@ public class JwtTokenUtils {
         } catch (ExpiredJwtException e) {
             return null;
         }
-        String email = (String) (claims != null ? claims.get(CLAIM_KEY_USERNAME) : null);
+        Long id = claims != null ? (Long) claims.get(CLAIM_KEY_ID) : null;
         Date creationDate = new Date((Long) claims.get(CLAIM_KEY_CREATION_DATE));
-        return new EmailToken(email, creationDate, claims.getExpiration());
+        return new EmailToken(id, creationDate, claims.getExpiration());
     }
 }

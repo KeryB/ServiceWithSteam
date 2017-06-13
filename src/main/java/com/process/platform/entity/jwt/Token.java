@@ -6,13 +6,10 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- * Created by Кирилл on 01.04.2017.
- */
 @Data
 @AllArgsConstructor
 public class Token {
-    private String email;
+    private Long id;
     private String role;
     private Date expiration;
     private Date creationDate;

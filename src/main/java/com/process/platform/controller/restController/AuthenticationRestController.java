@@ -133,7 +133,7 @@ public class AuthenticationRestController {
         Token token = jwtTokenService.getClaimsFromToken(header);
         if (token == null)
             return RestResponse.error(ErrorStatus.INVALID_TOKEN_HEADER,ErrorMessage.INVALID_TOKEN_HEADER);
-        User user = userService.findByEmail(token.getEmail());
+        User user = userService.findById(token.getId());
         if (user == null) {
             return RestResponse.error(HttpStatus.UNAUTHORIZED.value(),HttpStatus.UNAUTHORIZED.toString());
         }

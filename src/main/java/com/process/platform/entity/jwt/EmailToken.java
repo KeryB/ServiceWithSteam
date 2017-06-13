@@ -8,7 +8,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 public class EmailToken {
-    private String email;
+    private Long id;
     private Date creationDate;
     private Date expiration;
 }

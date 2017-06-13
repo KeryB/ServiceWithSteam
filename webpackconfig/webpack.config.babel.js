@@ -225,7 +225,10 @@ module.exports = function (env) {
             extensions: ['.webpack-loader.js', '.web-loader.js', '.loader.js', '.js', '.jsx'],
             modules:    [path.resolve(__dirname, 'node_modules'), sourcePath],
         },
-
+        node:{
+            net:'empty',
+            dns:'empty'
+        },
         plugins,
 
         performance: isProd && {

@@ -7,6 +7,9 @@ import {validateUserSignInPage} from '../../actions/validate';
 import {putToken} from '../../utils/tokenManager';
 import {setSettings} from '../../utils/Utils';
 import {connect} from "react-redux";
+import  {updateStatusOfState }  from '../../actions/authAction';
+import  jwt  from 'jsonwebtoken';
+import {login} from '../../actions/authAction';
 
 class LoginForm extends Component {
 
@@ -20,7 +23,6 @@ class LoginForm extends Component {
         };
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
-        this.onchangeCheckBox = this.onchangeCheckBox.bind(this);
     }
 
     onChange(e) {
@@ -43,6 +45,7 @@ class LoginForm extends Component {
                 console.log(response);
                 if (response.result[0].token) {
                     putToken(response.result[0].token);
+                    this.props.login();
                     browserHistory.push('/homePage');
                 }
             }, error => {
@@ -65,13 +68,6 @@ class LoginForm extends Component {
         }
     }
 
-    onchangeCheckBox(e) {
-        if (this.state.checkBox) {
-            this.setState({checkBox: false});
-        } else {
-            this.setState({checkBox: true});
-        }
-    }
 
     render() {
         const {errors} = this.state;
@@ -115,17 +111,6 @@ class LoginForm extends Component {
                                                         spanName="glyphicon glyphicon-lock"
                                                     />
 
-                                                    <div className="row">
-                                                        <div className="checkbox checkbox-styled">
-                                                            <label>
-                                                                <input type="checkbox"
-                                                                       value={this.state.checkBox}
-                                                                       onChange={this.onchangeCheckBox}
-                                                                />
-                                                                <span>Запомнить меня</span>
-                                                            </label>
-                                                        </div>
-                                                    </div>
                                                     <div className="account-btn">
                                                         <div className="col-lg-5">
                                                             <button className="btn btn-primary btn-raised"
@@ -133,11 +118,10 @@ class LoginForm extends Component {
                                                                 Войти
                                                             </button>
                                                         </div>
-
                                                     </div>
+                                                    <br></br>
                                                 </form>
                                                 <div className="form-group m-t-50"></div>
-                                                <br></br>
                                                 <div className="m-t-50">
                                                     <div className=" m-t-50">
                                                         <p>
@@ -182,5 +166,8 @@ class LoginForm extends Component {
     }
 }
 
+LoginForm.propTypes ={
+  login:React.PropTypes.func.isRequired
+};
 
-export default connect()(LoginForm);
+export default connect(null,{login})(LoginForm);
