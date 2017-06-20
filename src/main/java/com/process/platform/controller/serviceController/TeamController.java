@@ -1,10 +1,12 @@
 package com.process.platform.controller.serviceController;
 
+import com.process.platform.entity.RestResponse;
 import com.process.platform.entity.team.Team;
 import com.process.platform.entity.user.User;
 import com.process.platform.entity.user.UserRole;
 import com.process.platform.service.impl.TeamService;
 import com.process.platform.service.impl.UserService;
+import com.process.platform.utils.Jwt.PersonData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 
 @RestController
-@RequestMapping(value = "/team")
+@RequestMapping(value = "/api/team")
 public class TeamController {
     private final TeamService teamService;
     private final UserService userService;
@@ -40,7 +42,7 @@ public class TeamController {
     }
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<Team> save(@RequestBody Team team) {
-    return ResponseEntity.ok(teamService.save(team));
+        return ResponseEntity.ok(teamService.save(team));
     }
 
     @RequestMapping(value = "/leave_team",method = RequestMethod.POST)
@@ -63,5 +65,20 @@ public class TeamController {
         userService.saveUser(user);
         teamService.save(team);
         return ResponseEntity.ok(true);
+    }
+
+    @RequestMapping(value = "/setAvatar",method = RequestMethod.GET)
+    public ResponseEntity setAvatar(){
+        return null;
+    }
+
+    @RequestMapping(value = "/setCaptain",method = RequestMethod.POST)
+    public void setCaptain(@RequestBody User source,User target){
+        if(source.isCaptain()){
+            source.setCaptain(false);
+            target.setCaptain(true);
+        }
+        userService.saveUser(source);
+        userService.saveUser(target);
     }
 }

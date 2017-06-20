@@ -58,4 +58,7 @@ public class User{
 
     private  String googleId;
 
+    @Lob
+    private byte[] image;
+
 }

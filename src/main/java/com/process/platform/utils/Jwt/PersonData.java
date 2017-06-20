@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Base64;
 import java.util.Date;
 
 @Getter
@@ -19,5 +20,7 @@ public class PersonData {
     private String first_name;
     private String second_name;
     private String nickname;
+    private Boolean isCaptain;
     private Boolean isTokenExpired;
+    private String image;
 }

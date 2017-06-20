@@ -1,57 +1,67 @@
-export function showModal(idModal) {
+"use strict";
+import * as React from "react";
 
-    return (
-        <div>
-            <div className="modal fade" id={idModal} tabindex="-1" role="dialog" aria-labelledby="formModalLabel"
-                 aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <button type="button" className="close" data-dismiss="modal"
-                                    aria-hidden="true">&times;</button>
-                            <h4 className="modal-title" id="formModalLabel">Login to continue</h4>
-                        </div>
-                        <form className="form-horizontal" role="form">
-                            <div className="modal-body">
-                                <div className="form-group">
-                                    <div className="col-sm-3">
-                                        <label htmlFor="email1" className="control-label">Email</label>
-                                    </div>
-                                    <div className="col-sm-9">
-                                        <input type="email" name="email1" id="email1" className="form-control"
-                                               placeholder="Email"/>
-                                    </div>
-                                </div>
-                                <div className="form-group">
-                                    <div className="col-sm-3">
-                                        <label htmlFor="password1" className="control-label">Password</label>
-                                    </div>
-                                    <div className="col-sm-9">
-                                        <input type="password" name="password1" id="password1"
-                                               className="form-control" placeholder="Password"/>
-                                    </div>
-                                </div>
-                                <div className="form-group">
-                                    <div className="col-sm-3">
-                                    </div>
-                                    <div className="col-sm-9">
-                                        <div className="checkbox">
-                                            <label>
-                                                <input type="checkbox" id="cb1"/> Remember me
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-default" data-dismiss="modal">Cancel
-                                </button>
-                                <button type="button" className="btn btn-primary">Login</button>
-                            </div>
-                        </form>
+export default class Modal extends React.Component {
+    static MODAL_CONFIRM_SHOW_EVENT = 'MODAL_CONFIRM:SHOW';
+    constructor() {
+        super();
+        this.height = '30%';
+        this.width = '100%';
+        $(document).on(Modal.MODAL_CONFIRM_SHOW_EVENT, $.proxy(this.show, this));
+        this.state = {
+            header: null, text: null, height: this.height, width: this.width, callback: () => {
+            }
+        };
+    }
+    componentWillUnmount() {
+        $(document).off(Modal.MODAL_CONFIRM_SHOW_EVENT);
+    }
+
+    show(event, data) {
+        $('#Modal').modal();
+        this.setState({
+            header: typeof data.header === 'undefined' ? '' : data.header,
+            callback: typeof data.callback === 'function' ? data.callback : () => {
+                },
+            text: typeof data.text === 'undefined' ? '' : data.text,
+            height: typeof data.height === 'undefined' ? this.height : data.height,
+            width: typeof data.width === 'undefined' ? this.width : data.width
+        });
+    }
+
+    render() {
+        console.log(this.props);
+        let header = this.state.header,
+            text = this.state.text;
+        return <div className="modal fade"
+                    id="modal_confirm"
+                    tabIndex="-1"
+                    role="dialog"
+                    aria-hidden="true"
+                    style={{display: 'none', paddingRight: '15px', zIndex: '1062'}}>
+            <div className="modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header" style={{backgroundColor: '#ff5722'}}>
+                        <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 className="modal-title">{header}</h4>
+                    </div>
+                    <div className="modal-body">
+                        {text}
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn ripple btn-flat btn-default"
+                                data-dismiss="modal">
+                            Отмена
+                        </button>
+                        <button
+                            onClick={this.state.callback}
+                            data-dismiss="modal"
+                            type="button" className="btn ripple btn-flat btn-danger">
+                            Подтвердить
+                        </button>
                     </div>
                 </div>
             </div>
-        </div>
-    )
+        </div>;
+    }
 }

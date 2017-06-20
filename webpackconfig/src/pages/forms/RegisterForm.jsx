@@ -6,6 +6,10 @@ import {api} from '../../actions/api/Api';
 import {putToken} from '../../utils/tokenManager'
 import {browserHistory} from 'react-router';
 import {setSettings} from '../../utils/Utils';
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import * as authAction from '../../actions/authAction';
+import { addFlashMessage} from '../../actions/flashMessages';
 
 class RegisterForm extends Component {
 
@@ -42,14 +46,8 @@ class RegisterForm extends Component {
         if (this.isValid()) {
             this.setState({errors: {}});
             api('/api/auth/registration', 'POST', this.state).then(response => {
-                console.log(response);
                 if (response.result[0].token) {
                     putToken(response.result[0].token);
-
-                    /*Сделать fleshMessage
-                     * Сделать redirect
-                     * Поставить статус token =valid
-                     */
                     this.props.addFlashMessage({
                         type: 'success',
                         text: 'Вы успешно зарегистрировались в системе'
@@ -194,10 +192,20 @@ class RegisterForm extends Component {
         )
     }
 }
-
 RegisterForm.propTypes = {
-    userRegistrationRequest: React.PropTypes.func.isRequired,
     addFlashMessage: React.PropTypes.func.isRequired
 };
 
-export default RegisterForm;
+function mapStateToProps(state) {
+    return {
+        auth: state.authenticaton
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        authAction: bindActionCreators(authAction, dispatch)
+    }
+}
+
+export default connect(mapStateToProps,{mapDispatchToProps,addFlashMessage})(RegisterForm);

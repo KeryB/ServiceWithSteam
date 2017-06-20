@@ -7,21 +7,22 @@ class Navbar extends React.Component {
     render() {
         const auth = this.props.user;
         const user = auth.user;
-        console.log(user);
+        console.log(auth);
         const userStaff = (
             <ul className="header-nav header-nav-profile">
                 <li className="dropdown">
                     <a href="javascript:void(0);" className="dropdown-toggle ink-reaction"
                        data-toggle="dropdown">
-                        <img src="../css/material/img/avatar1.jpg?1403934956" alt=""/>
+                        <img src="../css/material/img/unknown_user.png" alt=""/>
                         <span className="profile-info">
                             {user.nickname}
                             <small>{user.role == Roles.ADMIN && user.role == Roles.SUPERUSER ? user.role : 'Пользователь'}</small>
-								</span>
+                        </span>
                     </a>
                     <ul className="dropdown-menu animation-dock">
                         <li className="dropdown-header">Свойства</li>
-                        <li><a href="../../html/pages/profile.html">Профайл</a></li>
+                        <li><Link to='/profile'>Профайл</Link></li>
+                        <li><a>Создать команду</a></li>
                         <li className="divider"/>
                         <li><a href="../../html/pages/locked.html"><i className="fa fa-fw fa-lock"/>
                             Lock</a></li>
@@ -31,12 +32,11 @@ class Navbar extends React.Component {
                 </li>
             </ul>
         );
-
         const guestsStaff = (
             <ul className="header-nav header-nav-options">
 
-                <li className="link-default">
-                    <Link to='/register' href="javascript:void(0);"
+                <li className="line-height-xl">
+                    <Link to='/register'
                           className="dropdown-toggle ink-reaction">
                         Регистрация
                     </Link>
@@ -50,7 +50,7 @@ class Navbar extends React.Component {
 
             </ul>
         );
-
+//        console.log('Navbar',user);
         return (
             <div className="menubar-hoverable header-fixed menubar-pin ">
                 <header id="header">
@@ -60,7 +60,7 @@ class Navbar extends React.Component {
                             <ul className="header-nav header-nav-options">
                                 <li className="header-nav-brand">
                                     <div className="brand-holder">
-                                        <Link to='/homePage'>
+                                        <Link to='/'>
                                             <span className="text-lg text-bold text-primary">BRAND</span>
                                         </Link>
                                     </div>

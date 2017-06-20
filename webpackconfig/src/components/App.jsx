@@ -1,51 +1,58 @@
 import Navbar from './Navbar'
 import React from 'react'
 import Greetings from './Greetings'
-import LoginForm from '../pages/forms/LoginForm';
-import Register from '../pages/Register';
+import * as authAction from '../actions/authAction';
 import {connect} from "react-redux";
 import {getToken, deleteToken, putToken} from '../utils/tokenManager';
 import {api} from '../actions/api/Api';
-import {getUserData, updateUserData} from "../actions/authAction";
 import {browserHistory} from 'react-router';
 import * as path from '../const/PathConstants';
-import Authenticated from '../components/HighOrderComponent/Authenticated';
+import {bindActionCreators} from 'redux'
+import {callConfirm} from '../utils/Utils';
+import Profile from '../pages/forms/Profile';
 
 class App extends React.Component {
 
     componentWillMount() {
-        console.log(this.props.auth.isAuthenticated);
         if (!this.props.auth.isAuthenticated) {
+            console.log('componentWillMount', this.props.auth);
             if (getToken()) {
-                api('/api/user/getData', 'POST').then(response => {
-                        this.props.getUserData(response.result[0]);
-                    },
-                    error => {
-                        deleteToken();
-                    });
+                this.props.authAction.fetchUserData();
             }
         }
     }
 
     componentWillReceiveProps(props) {
+    console.log(props);
         const data = props.auth;
-        if (data.isAuthenticated) {
-            if (data.user.isTokenExpired) {
-                deleteToken();
-                api('/api/auth/refresh_token', 'POST').then(response => {
-                        putToken(response.result[0])
-                    },
-                    error => {
-                        deleteToken();
-                    })
+        console.log(data);
+        if(!data.isAuthenticated&&!data.isFetching) {
+            if (data.isAuthenticated) {
+                if (data.user.isTokenExpired) {
+                    deleteToken();
+                    api('/api/auth/refresh_token', 'POST').then(response => {
+                            putToken(response.result[0])
+                        },
+                        error => {
+                            deleteToken();
+                        })
+                }
+            } else {
+                console.log('componentWillReceiveProps', this.props.auth);
+                if (getToken()) {
+                    this.props.authAction.fetchUserData();
+                }
             }
         }
     }
 
     logout = () => {
-        this.props.updateUserData(this.props.auth);
+        callConfirm('Выход', 'Вы действительно хотите выйти из профиля?', () => {
+
+        });
+        this.props.authAction.makeLogoutUser(this.props.auth);
         deleteToken();
-        browserHistory.push('/homePage');
+        browserHistory.push('/');
     };
 
     render() {
@@ -54,13 +61,18 @@ class App extends React.Component {
         const login = this.props.location.pathname;
         return (
             <div>
-                {this.props.location.pathname === path.LOGIN ||login === path.REGISTER?
-                    <div></div>:
+                <div>
+                {this.props.location.pathname === path.LOGIN || login === path.REGISTER ?
+                    <div></div> :
                     <div>
-                        <Navbar user={auth} logout={logout}/>
+                        {auth.isFetching ? <div></div> :
+                            <div>
+                                <Navbar user={auth} logout={logout}/>
+                            </div>}
                     </div>
                 }
                 <Greetings/>
+                </div>
                 {this.props.children}
             </div>
         )
@@ -69,8 +81,6 @@ class App extends React.Component {
 
 App.propTypes = {
     auth: React.PropTypes.object.isRequired,
-    getUserData: React.PropTypes.func.isRequired,
-    updateUserData: React.PropTypes.func.isRequired
 };
 
 function mapStateToProps(state) {
@@ -79,4 +89,10 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps, {getUserData, updateUserData})(App);
+function mapDispatchToProps(dispatch) {
+    return {
+        authAction: bindActionCreators(authAction, dispatch)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

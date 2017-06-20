@@ -15,7 +15,7 @@ export default class NotFound extends Component {
                         <p className="heading_b">Page not found</p>
                         <p className="uk-text-large">
                             The requested URL <span className="uk-text-muted">/asd</span> was not found on this server.
-                            Вернуться на <Link to='/homePage'>главную</Link>?
+                            Вернуться на <Link to='/'>главную</Link>?
                         </p>
                     </div>
                 </div>

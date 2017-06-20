@@ -13,9 +13,6 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Кирилл on 30.03.2017.
- */
 @Entity
 @Data
 @NoArgsConstructor

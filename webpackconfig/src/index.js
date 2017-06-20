@@ -11,12 +11,13 @@ import './css/material/custom.css';
 import './css/material/bootstrap.css';
 import './css/material/materialadmin.css';
 import './css/material/font-awesome.min.css';
-import './css/material/toastr.css'
+import './css/material/toastr.css';
 import './css/material/material-design-iconic-font.min.css';
-import './animation/materialadmin/App'
-import './animation/materialadmin/bootstrap.min'
-import './animation/materialadmin/jquery-1.11.2.min'
-import './animation/materialadmin/AppForm'
+import './animation/materialadmin/App';
+import './animation/materialadmin/bootstrap.min';
+import './animation/materialadmin/jquery-1.11.2.min';
+import './animation/materialadmin/AppForm';
+import './animation/materialadmin/AppVendor';
 
 /*const store = createStore(
     rootReducer,

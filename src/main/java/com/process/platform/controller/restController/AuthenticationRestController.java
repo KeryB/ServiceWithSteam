@@ -72,7 +72,6 @@ public class AuthenticationRestController {
         try {
             authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            logger.info(authentication);
         } catch (Exception e) {
             return RestResponse.error(ErrorStatus.EMAIL_OR_PASSWORD_NOT_CORRECT,ErrorMessage.EMAIL_OR_PASSWORD_NOT_CORRECT);
         }
