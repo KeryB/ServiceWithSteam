@@ -7,10 +7,12 @@ export function api(path, method, data) {
 
     const config = ({
         method: method,
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
+        headers: {'Content-Type': 'application/json'}
     });
 
+    if (method === 'POST') {
+        config.body = JSON.stringify(data);
+    }
     const token = getToken();
     if (token) {
         config.headers[tokenHeader] = token;
@@ -29,6 +31,7 @@ export function api(path, method, data) {
             message: response.statusText
         };
     }).then(data => {
+            console.log(data);
             if (data.status !== Status.OK) {
                 let error = {
                     status: data.status,

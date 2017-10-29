@@ -33,6 +33,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         );
         RestResponse<Map<String,Object>> response = new RestResponse<Map<String, Object>>(400,ErrorMessage.BAD_REQUEST,errors);
         return new ResponseEntity<>(response,new HttpHeaders(), HttpStatus.OK);
+
+
+
     }
 
 }

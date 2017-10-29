@@ -1,7 +1,6 @@
 import React from 'react';
 import {Route, IndexRoute} from 'react-router';
 import NotFound from '../pages/NotFound';
-import Register from '../pages/Register';
 import List from '../pages/List';
 import App from '../components/App';
 import LoginForm from '../pages/forms/LoginForm';
@@ -10,7 +9,8 @@ import NotAuth from '../components/HighOrderComponent/NotAuth';
 import RegisterForm from '../pages/forms/RegisterForm';
 import Profile from '../pages/forms/Profile';
 import Settings from '../pages/forms/Settings';
-
+import Search from '../pages/forms/Search';
+import YandexMaps from '../pages/forms/YandexMaps';
 
 export const routes = (
     <div>
@@ -21,7 +21,10 @@ export const routes = (
             <Route path='login' component={Authenticated(LoginForm)}/>
             <Route path='profile' component={NotAuth(Profile)}>
             </Route>
-            <Route path='settings' component={NotAuth(Settings)}/>
+            <Route path='profile/settings' component={NotAuth(Settings)}/>
+            <Route path='profile/:id' component={NotAuth(Profile)}/>
+            <Route path='location' component={NotAuth(YandexMaps)}/>
+            <Route path = 'search' component = {NotAuth(Search)}/>
         </Route>
         <Route path='*' component={NotFound}/>
     </div>

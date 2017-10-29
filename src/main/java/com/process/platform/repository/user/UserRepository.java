@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.stream.Stream;
 
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends JpaRepository<User,Long>,CustomUserRepository {
     User findByEmail(String email);
 
     @Query("select u from User u where u.primaryTeam.id =:teamId")

@@ -8,10 +8,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 
-/**
- * Created by Кирилл on 01.04.2017.
- */
-
 @Getter
 @Setter
 @NoArgsConstructor

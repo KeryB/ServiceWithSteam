@@ -1,5 +1,7 @@
 package com.process.platform.service.impl;
 
+import com.process.platform.entity.PageableResult;
+import com.process.platform.entity.SearchRequest;
 import com.process.platform.entity.user.User;
 import com.process.platform.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +12,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Stream;
 
-/**
- * Created by Кирилл on 31.03.2017.
- */
 @Service
 @Transactional
 public class UserService {
@@ -47,5 +46,11 @@ public class UserService {
     public boolean countMemberOfTeamId(long teamId) {
         Stream<User> stream = userRepository.findMembersOfTeam(teamId);
         return stream.count() == 0;
+    }
+
+    public PageableResult findUsers(SearchRequest searchRequest){
+        List<User> users = userRepository.find(searchRequest);
+        int count = userRepository.count(searchRequest);
+        return new PageableResult<>(users,count);
     }
 }

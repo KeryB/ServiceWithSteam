@@ -50,7 +50,7 @@ public class JwtTokenUtils {
                     .getBody();
         }catch (ExpiredJwtException e){
             claims=e.getClaims();
-            Long id = (Long) claims.get(CLAIM_KEY_ID);
+            Long id = ((Integer)claims.get(CLAIM_KEY_ID)).longValue();
             String role = (String) claims.get(CLAIM_KEY_ROLE);
             Date creationDate = new Date((Long) claims.get(CLAIM_KEY_CREATION_DATE));
             return new Token(id,role,claims.getExpiration(),creationDate);

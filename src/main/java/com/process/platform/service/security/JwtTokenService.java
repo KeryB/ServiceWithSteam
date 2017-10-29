@@ -4,6 +4,7 @@ import com.process.platform.entity.jwt.EmailToken;
 import com.process.platform.entity.jwt.Token;
 import com.process.platform.entity.user.User;
 import com.process.platform.utils.Jwt.JwtTokenUtils;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

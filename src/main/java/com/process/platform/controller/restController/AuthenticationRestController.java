@@ -126,7 +126,7 @@ public class AuthenticationRestController {
         return RestResponse.ok(new JwtAuthenticationResponse(token));
     }
 
-    @RequestMapping(value = "/refresh_token", method = RequestMethod.GET)
+    @RequestMapping(value = "/refresh_token", method = RequestMethod.POST)
     public RestResponse refreshToken(HttpServletRequest request) {
         String header = request.getHeader(tokenHeader);
         Token token = jwtTokenService.getClaimsFromToken(header);

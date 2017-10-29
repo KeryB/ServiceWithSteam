@@ -18,6 +18,8 @@ import './animation/materialadmin/bootstrap.min';
 import './animation/materialadmin/jquery-1.11.2.min';
 import './animation/materialadmin/AppForm';
 import './animation/materialadmin/AppVendor';
+import { syncHistoryWithStore } from 'react-router-redux';
+import 'react-select/dist/react-select.css';
 
 /*const store = createStore(
     rootReducer,
@@ -30,11 +32,12 @@ const store = createStore(
         window.devToolsExtension ? window.devToolsExtension() : f => f
     )
 );
+const history = syncHistoryWithStore(browserHistory, store);
 
 const renderApp = Routers => {
     render(
         <Provider store={store}>
-            <Router history={browserHistory}>
+            <Router history={history}>
                 <AppContainer>
                     {Routers}
                 </AppContainer>

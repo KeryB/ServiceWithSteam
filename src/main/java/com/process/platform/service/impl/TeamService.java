@@ -7,9 +7,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-/**
- * Created by Кирилл on 31.03.2017.
- */
 @Service
 @Transactional
 public class TeamService {
@@ -23,6 +20,9 @@ public class TeamService {
 
     public Team save(Team team){
         return teamRepository.save(team);
+    }
+    public Team findOne(long id){
+        return teamRepository.findOne(id);
     }
     public void delete(Team team){
         teamRepository.delete(team);

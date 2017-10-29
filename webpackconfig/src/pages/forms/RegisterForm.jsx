@@ -10,6 +10,7 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import * as authAction from '../../actions/authAction';
 import { addFlashMessage} from '../../actions/flashMessages';
+import * as flashMessagesType from '../../utils/UtilsFlashMessages';
 
 class RegisterForm extends Component {
 
@@ -49,7 +50,7 @@ class RegisterForm extends Component {
                 if (response.result[0].token) {
                     putToken(response.result[0].token);
                     this.props.addFlashMessage({
-                        type: 'success',
+                        type: flashMessagesType.SUCCESS,
                         text: 'Вы успешно зарегистрировались в системе'
                     });
                     browserHistory.push('/homePage');

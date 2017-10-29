@@ -25,6 +25,9 @@ jwt:
   header: x-auth-token
   secret: da7ca69f41dce5179752a7546dfa0959
   expiration: 259200
-
 Google:
   clientId: 144148076914-ggd8h7aikicheumbfmsqtbv3klpni6cn.apps.googleusercontent.com
+
+Request:
+  max:
+    team: 6

@@ -5,7 +5,7 @@ import {browserHistory} from 'react-router';
 import {api} from '../../actions/api/Api';
 import {validateUserSignInPage} from '../../actions/validate';
 import {putToken} from '../../utils/tokenManager';
-import {setSettings} from '../../utils/Utils';
+import {setSettings, warningFlashMessage} from '../../utils/Utils';
 import {connect} from "react-redux";
 import  {updateStatusOfState}  from '../../actions/authAction';
 import {login} from '../../actions/authAction';
@@ -67,9 +67,10 @@ class LoginForm extends Component {
             setSettings(auth.user.message, auth.user.status);
         }
     }
-    googleSignIn = (response)=>{
+
+    googleSignIn = (response) => {
         const token = response.tokenId;
-        api('api/auth/google_auth','GET',null).then(responseApi =>{
+        api('api/auth/google_auth', 'GET', null).then(responseApi => {
             console.log(responseApi);
         })
     };
@@ -131,32 +132,17 @@ class LoginForm extends Component {
                                                             </div>
                                                             <br></br>
                                                         </form>
-                                                        <div className="form-group m-t-50"></div>
-                                                        <div className="m-t-50">
-                                                            <div className=" m-t-50">
-                                                                <p>
-                                                                    <a href="#"
-                                                                       className="btn btn-block btn-raised btn-info"><i
-                                                                        className="fa fa-facebook pull-left"/>Авторизоваться
-                                                                        через фейсбук</a>
-                                                                </p>
-                                                            </div>
-
-                                                            <p>
-
-                                                                <GoogleLogin clientId={GOOGLE_CLIENT_ID}
-                                                                             className="btn btn-block btn-raised btn-info"
-                                                                             buttonText=""
-                                                                             onSuccess={this.googleSignIn}
-                                                                             onFailure={() => {
-                                                                             }}
-                                                                >
-                                                                    <i className="fa fa-google pull-left"/>Авторизоваться
-                                                                    через
-                                                                    Google
-                                                                </GoogleLogin>
-
-                                                            </p>
+                                                        <div className="form-group m-t-50"/>
+                                                        <div className="m-t-50 col-lg-offset-1">
+                                                            <button type="button" className="btn btn-googleplus btn-raised col-md-offset-1">
+                                                                <i className="fa fa-google-plus"/>
+                                                            </button>
+                                                            <button type="button" className="btn btn-facebook btn-raised col-md-offset-1">
+                                                                <i className="fa fa-facebook"/>
+                                                            </button>
+                                                            <button type="button" className="btn btn-twitter btn-raised col-md-offset-1">
+                                                                <i className="fa fa-twitter"/>
+                                                            </button>
                                                         </div>
                                                         <div className="form-group m-t-50">
                                                             <div className="col-md-7 col-md-offset-7 ">
@@ -191,7 +177,8 @@ class LoginForm extends Component {
 
 function mapStateToProps(state) {
     return {
-        auth: state.authenticaton
+        auth: state.authenticaton,
+        flashMessage: state.flashMessages
     }
 }
 

@@ -1,5 +1,6 @@
 package com.process.platform.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.process.platform.utils.Jpa.JpaUtils;
 import com.process.platform.entity.request.InviteRequest;
 import com.process.platform.entity.team.Team;
@@ -16,7 +17,6 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = JpaUtils.USER_TABLE_NAME)
 public class User{
@@ -29,10 +29,12 @@ public class User{
     @Pattern(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
     private String email;
 
+    @JsonIgnore
     @Size(min=5,max=100)
     @Pattern(regexp = "(\\w|\\D)+")
     private String password;
 
+    @JsonIgnore
     @DateTimeFormat(pattern = "MM/dd/yyyy")
     private Date creation_date;
 
@@ -56,9 +58,12 @@ public class User{
 
     private boolean captain;
 
+    @JsonIgnore
     private  String googleId;
 
     @Lob
     private byte[] image;
 
+    @Size(max = 100)
+    private String aboutUser;
 }

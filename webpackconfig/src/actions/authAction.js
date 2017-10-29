@@ -1,6 +1,6 @@
 import * as Types from  '../const/ActionTypes';
 import {api} from './api/Api';
-import {putToken,deleteToken} from '../utils/tokenManager';
+import {putToken,deleteToken, getToken} from '../utils/tokenManager';
 import {browserHistory} from 'react-router';
 
 export function makeAuth(data) {
@@ -36,6 +36,34 @@ function errorAuth(error) {
 
 }
 
+export function refreshToken(){
+    return dispatch =>{
+        dispatch ({
+            type: Types.REFRESH_TOKEN_REQUEST
+        });
+        api('/api/auth/refresh_token', 'POST', getToken()).then(response => {
+            dispatch(successRefreshToken());
+            deleteToken();
+            const token = response.result[0].token;
+            putToken(token);
+        }, error =>{
+            dispatch(errorRefreshToken());
+        })
+    }
+}
+
+function successRefreshToken() {
+    return {
+        type: Types.REFRESH_TOKEN_SUCCESS
+    }
+}
+
+function errorRefreshToken() {
+    return {
+        type: Types.REFRESH_TOKEN_ERROR
+    }
+}
+
 export function fetchUserData() {
 
     return dispatch => {
@@ -43,6 +71,7 @@ export function fetchUserData() {
             type: Types.FETCH_USER_DATA_REQUEST,
         });
         api('/api/user/getData', 'POST').then(response => {
+            console.log(response);
            dispatch(successUserData(response.result[0]))
         },error=>{
             dispatch(errorUserData());
@@ -70,7 +99,7 @@ export function updateUserData(user) {
         api('/api/user/updateUserData', 'POST',user).then(response =>{
             dispatch(successUpdateUserData(response.result[0]))
         },error =>{
-
+            console.log(error);
         })
     };
 }
@@ -79,6 +108,11 @@ function successUpdateUserData(user) {
     return{
         type:Types.UPDATE_USER_DATA_SUCCESS,
         user
+    }
+}
+function errorUpdateUserData(user) {
+    return{
+
     }
 }
 export function makeLogoutUser(user) {

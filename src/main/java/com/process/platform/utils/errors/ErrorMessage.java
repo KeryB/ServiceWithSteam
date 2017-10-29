@@ -1,8 +1,6 @@
 package com.process.platform.utils.errors;
 
-/**
- * Created by Кирилл on 01.04.2017.
- */
+
 public class ErrorMessage {
 
     public static final String EMPTY_FIELD="Поле должно быть заполнено";
@@ -12,4 +10,5 @@ public class ErrorMessage {
     public static final String TOKEN_EXPIRED = "Время токена вышло";
     public static final String BAD_REQUEST = "Bad Request";
     public static final String EMAIL_OR_PASSWORD_NOT_CORRECT = "Е-mail или пароль указаны неверно";
+    public static final String NO_PRIVILEGES = "У вас нет привелегий, чтобы сделать это";
 }

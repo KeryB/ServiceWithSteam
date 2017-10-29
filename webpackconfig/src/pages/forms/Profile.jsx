@@ -1,16 +1,20 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {connect} from "react-redux";
-import {toBase64} from "../../utils/Utils";
+import {toBase64, convertId} from "../../utils/Utils";
 import {bindActionCreators} from "redux";
-import * as authAction from '../../actions/authAction';
+import * as userDataAction from '../../actions/userDataAction';
+import isEmpty from 'lodash/isEmpty';
+import NotFound from '../NotFound';
 
 class Profile extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            image: []
+            image: [],
+            flag: false,
+            unknownUser: false
         };
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -24,10 +28,6 @@ class Profile extends Component {
             this.setState({image: data.result});
             this.props.authAction.updateUserData(this.state)
         });
-//        this.props.authAction.updateUserData(this.state);
-        /*        BBASe(file,(data)=>{
-         console.log(data);
-         });*/
     }
 
     onChange(e) {
@@ -35,13 +35,41 @@ class Profile extends Component {
         this.setState({[e.target.name]: e.target.value});
     }
 
-    render() {
+    componentWillMount() {
+    }
 
-        const userPayload = this.props.auth;
-        console.log(this.props.location.pathname);
+    componentWillReceiveProps(props) {
+        if (!this.props.data.isFetched && this.props.auth.isFetching) {
+            const id = props.routers.params.id;
+            if (isNaN(Number(id))) {
+                this.props.userData.errorUserData("Данная страница не найдена");
+                return;
+            }
+            console.log(props.routers);
+            if (props.auth.user.id !== Number(id)) {
+                this.props.userData.fetchUserDataById(id);
+                this.setState({
+                    unknownUser: true
+                })
+            }
+        }
+    }
+
+    render() {
+        let userPayload = this.props.auth;
+        if (!isEmpty(this.props.data.user) && convertId(userPayload.user.id) !== this.props.location.pathname) {
+            userPayload = this.props.data;
+        } else {
+            userPayload = this.props.auth;
+        }
+        if (!isEmpty(this.props.data.error)) {
+            return (<div>
+                <NotFound/>
+            </div>)
+        }
         return (
             <div>
-                {userPayload.isFetching ? <div></div> :
+                {userPayload.isFetching && !this.props.data.isFetched ? <div></div> :
                     <div>
                         <br></br>
                         <br></br>
@@ -65,27 +93,26 @@ class Profile extends Component {
                                         <div className="row col-md-0"></div>
 
                                         <div className="row col-md-4">
-                                            <h3>Привет, {userPayload.user.nickname}</h3>
-                                            <form encType="multipart/form-data" onSubmit={this.onSubmit}>
-                                                {userPayload.user.image == null ?
-                                                    <div className="user_card">
-                                                        <img src="../css/material/img/unknown_user.png"
-                                                             height='180px'
-                                                             width='160px'/>
-                                                    </div> :
-                                                    <div>
-                                                        <img src={userPayload.user.image} height='180px'
-                                                             width='160px'/>
-                                                    </div>
-                                                }
-                                                <br/>
-                                                <input type="file" encType="image/*" id="fileUpload"
-                                                       onChange={this.onChange} name="image"/>
-                                                <button className="btn btn-primary btn-raised"
-                                                        type="submit">
-                                                    Сохранить
-                                                </button>
-                                            </form>
+                                            <h3>{userPayload.user.nickname}</h3>
+
+                                            {userPayload.user.image === null ?
+                                                <div className="user_card">
+                                                    <img src="../css/material/img/unknown_user.png"
+                                                         height='180px'
+                                                         width='160px'/>
+                                                </div> :
+                                                <div>
+                                                    <img src={userPayload.user.image} height='180px'
+                                                         width='160px'/>
+                                                </div>
+                                            }
+                                            <br/>
+                                            <div>
+                                                <Link to="/profile/settings" className="btn btn-primary btn-raised"
+                                                      type="submit">
+                                                    Редактировать
+                                                </Link>
+                                            </div>
                                         </div>
                                         <div className="row col-md-5">
                                             <h3>Информация</h3>
@@ -94,7 +121,8 @@ class Profile extends Component {
                                                 <div className="form-group">
                                                     <label className="col-sm-2 control-label">E-mail:</label>
                                                     <div className="col-sm-10">
-                                                        <div className="form-control-static">email@example.com
+                                                        <div
+                                                            className="form-control-static">{userPayload.user.email}
                                                         </div>
                                                     </div>
                                                     <label className="col-sm-2 control-label">Nickname:</label>
@@ -136,16 +164,10 @@ class Profile extends Component {
                                                     </div>
                                                 </div>
                                             </form>
-
                                         </div>
                                     </div>
                                     <div id="menu1" className="tab-pane">
                                         asdsad
-                                    </div>
-                                    <div className="col-md-3">
-                                        <Link to="/profile/settings"
-                                              className="btn btn-block btn-raised btn-primary"><i
-                                            className="md md-create"/>Редактировать</Link>
                                     </div>
                                 </div>
                             </div>
@@ -157,10 +179,18 @@ class Profile extends Component {
     }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
     return {
-        auth: state.authenticaton
+        auth: state.authenticaton,
+        data: state.otherUserData,
+        routers: ownProps
     }
 }
 
-export default connect(mapStateToProps)(Profile);
+function mapDispatchToProps(dispatch) {
+    return {
+        userData: bindActionCreators(userDataAction, dispatch)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

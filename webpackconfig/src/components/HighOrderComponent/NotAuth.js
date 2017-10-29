@@ -2,6 +2,8 @@ import {browserHistory} from 'react-router';
 import React from 'react';
 import * as path from '../../const/PathConstants';
 import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import * as flashMessages from "../../actions/flashMessages";
 
 export default function (ComposedComponent) {
 
@@ -10,13 +12,21 @@ export default function (ComposedComponent) {
         componentWillMount(){
             console.log(this.props.auth);
             if(!this.props.auth.isAuthenticated&&!this.props.auth.isFetching){
-                browserHistory.push(path.ROOT)
+                this.props.flashMessage.addFlashMessage({
+                    type: "warning",
+                    text: "Чтобы зайти на данный ресурс, вам нужно авторизоваться"
+                });
+                browserHistory.push(path.LOGIN)
             }
         }
         componentWillReceiveProps(props) {
             if(!props.auth.isAuthenticated){
                 console.log(this.props.auth);
-                browserHistory.push(path.ROOT)
+                this.props.flashMessage.addFlashMessage({
+                    type: "warning",
+                    text: "Чтобы зайти на данный ресурс, вам нужно авторизоваться"
+                });
+                browserHistory.push(path.LOGIN)
             }
         }
 
@@ -40,5 +50,11 @@ export default function (ComposedComponent) {
         }
     }
 
-    return connect(mapStateToProps)(NotAuth);
+    function mapDispatchToProps(dispatch) {
+        return {
+            flashMessage: bindActionCreators(flashMessages,dispatch)
+        }
+    }
+
+    return connect(mapStateToProps, mapDispatchToProps)(NotAuth);
 }

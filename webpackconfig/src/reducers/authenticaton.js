@@ -4,65 +4,83 @@ import {putToken} from '../utils/tokenManager';
 
 const initialState = {
     isAuthenticated: false,
-    isFetching:false,
-    errors:false,
+    isFetching: false,
+    errors: false,
+    canTokenBeRefreshed: false,
     user: {}
 };
 export default (state = initialState, action = {}) => {
     switch (action.type) {
 
         case Types.MAKE_AUTH_REQUEST:
-            console.log(action);
-            return{
+            return {
                 ...initialState,
-                isFetching:true,
+                isFetching: true,
             };
         case Types.MAKE_AUTH_SUCCESS:
-            console.log(action.token);
             putToken(action.token);
-            return{
+            return {
                 ...initialState,
-                errors:false
+                errors: false,
             };
         case Types.MAKE_AUTH_FAILED:
-            return{
+            return {
                 ...initialState,
-                errors:true,
-                user:action.payload
+                errors: true,
+                user: action.payload
             };
         case Types.FETCH_USER_DATA_REQUEST:
-            return{
+            return {
                 ...initialState,
-                isFetching:true
+                isFetching: true
             };
         case Types.FETCH_USER_DATA_SUCCESS:
-            return{
-                isAuthenticated:true,
-                errors:false,
-                isFetching:false,
-                user:action.user
+            return {
+                isAuthenticated: true,
+                errors: false,
+                isFetching: false,
+                user: action.user
             };
         case Types.FETCH_USER_DATA_FAILED:
-            return{
+            return {
                 ...initialState,
-                errors:true,
-                isFetching:false
+                errors: true,
+                isFetching: false
             };
         case Types.UPDATE_USER_DATA_REQUEST:
-            return{
+            return {
                 ...state,
-                isFetching:true
+                isFetching: true
             };
         case Types.UPDATE_USER_DATA_SUCCESS:
-            return{
-                isFetching:false,
-                isAuthenticated:true,
-                errors:false,
-                user:action.user
+            return {
+                isFetching: false,
+                isAuthenticated: true,
+                errors: false,
+                user: action.user
             };
         case Types.FETCH_USER_DATA_UPDATE:
-            return{
+            return {
                 ...initialState
+            };
+        case Types.REFRESH_TOKEN_REQUEST:
+            return {
+                ...state,
+                isFetching: true,
+                canTokenBeRefreshed: true
+            };
+        case Types.REFRESH_TOKEN_SUCCESS:
+            return{
+                ...state,
+                user:{},
+                isFetching: false,
+                canTokenBeRefreshed: false
+            };
+        case Types.REFRESH_TOKEN_ERROR:
+            return{
+                isFetching: false,
+                canTokenBeRefreshed: false,
+                errors: true
             };
         default:
             return state;
